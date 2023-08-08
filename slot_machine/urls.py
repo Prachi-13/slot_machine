@@ -20,5 +20,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('game_session.urls')),
+    path('', include('django.contrib.auth.urls')),
+    path('game_session/', include('game_session.urls')),
+    path('accounts/', include('account.urls')),
 ]

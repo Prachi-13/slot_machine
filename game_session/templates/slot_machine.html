@@ -1,8 +1,12 @@
 {% block title %} Slot Machine {% endblock title %}
 
 {% block content %}
- <h1>Welcome to the Slot Machine Game!</h1>
-    <p>Player: {{ game_session.player_name }}</p>
+    <h1>Welcome to the Slot Machine Game!</h1>
+    {% if game_session.user %}
+        <p>Player: {{ game_session.user.username }}</p>
+    {% elif game_session.is_guest %}
+        <p>Guest Player</p>
+    {% endif %}    
     <p>Credits: {{ game_session.credits }}</p>
     <p>Game State: {{ game_session.game_state }}</p>
 
@@ -13,6 +17,6 @@
 
     <form action="{% url 'cash_out' %}" method="post">
         {% csrf_token %}
-        <button type="submit">CASH OUT</button>
+        <button type="submit" id="cash_out_btn">CASH OUT</button>
     </form>
 {% endblock content %}
