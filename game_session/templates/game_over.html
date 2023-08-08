@@ -1,0 +1,8 @@
+{% block title %} Game Over {% endblock title %}
+
+{% block content %}
+ <h1>Game Over!</h1>
+    <p>Player: {{ game_session.player_name }}</p>
+    <p>Credits: {{ game_session.credits }}</p>
+    <p><a href="{% url 'slot_machine' %}">Click here to start a new game</a></p>
+{% endblock content %}
