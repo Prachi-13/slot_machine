@@ -1,4 +1,23 @@
+{% extends "base.html" %}
+
 {% block title %} Slot Machine {% endblock title %}
+
+{% block style %}
+#cash_out_btn {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#cash_out_btn.unclickable {
+    pointer-events: none;
+    opacity: 0.5;
+}
+{% endblock style %}
+
 
 {% block content %}
     <h1>Welcome to the Slot Machine Game!</h1>
@@ -6,17 +25,41 @@
         <p>Player: {{ game_session.user.username }}</p>
     {% elif game_session.is_guest %}
         <p>Guest Player</p>
-    {% endif %}    
+    {% endif %}
     <p>Credits: {{ game_session.credits }}</p>
-    <p>Game State: {{ game_session.game_state }}</p>
+    <p>Game State: {% if game_session.game_state %} {{ game_session.game_state }} {% else %} XXX {% endif %}</p>
 
     <form action="{% url 'pull_lever' %}" method="post">
         {% csrf_token %}
-        <button type="submit">Pull Lever (Costs 1 Credit)</button>
+        <button type="submit" class="btn btn-secondary">Pull Lever (Costs 1 Credit)</button>
     </form>
 
     <form action="{% url 'cash_out' %}" method="post">
         {% csrf_token %}
-        <button type="submit" id="cash_out_btn">CASH OUT</button>
+        <button type="submit" id="cash_out_btn" class="btn btn-outline-danger">CASH OUT</button>
     </form>
 {% endblock content %}
+
+{% block domready %}
+    const button = document.getElementById('cash_out_btn');
+
+    button.addEventListener('mouseenter', function () {
+        const shouldMove = Math.random() <= 0.5;
+        const shouldDisable = Math.random() <= 0.4;
+
+        if (shouldMove) {
+            const randomX = Math.random() * 600 - 300; // Taken more value to show the effect
+            const randomY = Math.random() * 600 - 300;
+            button.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        }
+
+        if (shouldDisable) {
+            button.classList.add('unclickable');
+        }
+    });
+
+    button.addEventListener('mouseleave', () => {
+        button.style.transform = 'none'; // Reset the button's position
+        button.classList.remove('unclickable'); // Remove unclickable class
+    });
+{% endblock %}
