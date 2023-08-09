@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'account.apps.AccountConfig',
 
+    #third party apps
+    'crispy_forms',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -139,3 +142,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'slot_machine'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
+# Backend Authentication settings
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'account.authenticate.EmailAuthBackend',
+]
