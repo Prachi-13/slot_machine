@@ -7,6 +7,9 @@ from .forms import UserRegistrationForm
 def home_page(request):
     return render(request, 'account/home.html')
 
+def dashboard(request):
+    return render(request, 'account/dashboard.html')
+
 
 def guest_login(request):
     return redirect("slot_machine")
