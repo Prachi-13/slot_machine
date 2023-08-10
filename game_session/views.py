@@ -13,8 +13,20 @@ def slot_machine(request):
     try:
         game_session = GameSession.objects.get(pk=session_id)
     except GameSession.DoesNotExist:
-        random_str = generate_random_string()
-        game_session = GameSession(player_name=f"Guest{random_str}")
+        requested_user = request.user
+        if requested_user.is_authenticated:
+            game_session = GameSession(player_name=requested_user.username, is_guest=False, user=requested_user)
+            # transfer those credits to game session
+            if requested_user.userprofile.credits >= 10:
+                requested_user.userprofile.credits -= 10
+                game_session.credits = 10
+            else:
+                game_session.credits = requested_user.userprofile.credits
+                requested_user.userprofile.credits = 0
+            requested_user.userprofile.save()
+        else:
+            random_str = generate_random_string()
+            game_session = GameSession(player_name=f"Guest{random_str}")
         game_session.save()
         request.session['session_id'] = game_session.id
     context = {"game_session": game_session}
@@ -61,4 +73,5 @@ def cash_out(request):
         user_profile.save()
 
         game_session.delete()
-    return redirect("slot_machine")
+        del request.session['session_id']
+    return redirect("dashboard")
