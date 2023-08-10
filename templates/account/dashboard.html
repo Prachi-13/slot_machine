@@ -6,5 +6,6 @@
 <div class="offset-md-3 col-md-6">
   <h1>Welcome to Dashboard!</h1>
     <p><a href="{% url 'slot_machine' %}">Click here</a> to Play Slot Machine Game</p>
+    <p>User Credits: {{ request.user.userprofile.credits }}</p>
 </div>
 {% endblock %}
