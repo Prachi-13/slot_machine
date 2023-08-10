@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 
 from .models import GameSession
-import random
 from .utils import generate_random_string, generate_random_blocks
 from core.enums.symbols import Symbols
-from core.config.constants import SYMBOLS_LIST
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 
@@ -29,8 +29,6 @@ def pull_lever(request):
         game_session = GameSession.objects.get(pk=session_id)
     else:
         return redirect("slot_machine")
-    # if game_session.credits < 2:
-    #     return render(request, 'game_over.html')
 
     if game_session.credits > 0:
         result = generate_random_blocks(game_session.credits)
@@ -53,9 +51,14 @@ def pull_lever(request):
     return redirect("slot_machine")
 
 
+@login_required
 def cash_out(request):
     session_id = request.session.get("session_id")
     if session_id:
         game_session = GameSession.objects.get(pk=session_id)
+        user_profile = request.user.userprofile
+        user_profile.credits += game_session.credits
+        user_profile.save()
+
         game_session.delete()
     return redirect("slot_machine")

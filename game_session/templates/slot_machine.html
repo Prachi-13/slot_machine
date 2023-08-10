@@ -1,8 +1,23 @@
 {% extends "base.html" %}
+{% load core_custom_tags %}
 
 {% block title %} Slot Machine {% endblock title %}
 
 {% block style %}
+.output-item {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 #cash_out_btn {
     padding: 10px 20px;
     background-color: #3498db;
@@ -27,11 +42,31 @@
         <p>Guest Player</p>
     {% endif %}
     <p>Credits: {{ game_session.credits }}</p>
-    <p>Game State: {% if game_session.game_state %} {{ game_session.game_state }} {% else %} XXX {% endif %}</p>
+    <div id="output-container">
+        Game State:
+        {% if game_session.game_state %}
+        {% for item in game_session.game_state|split:"," %}
+            {% with forloop.counter0 as index %}
+                <span class="output-item p-1" style="border: 1px solid black; animation-delay: {{ index }}s;">
+                        {{ item }}
+                </span>
+            {% endwith %}
+        {% endfor %}
+        {% else %}
+            {% for item in "X,X,X"|split:"," %}
+                {% with forloop.counter0 as index %}
+                    <span class="output-item p-1" style="border: 1px solid black; animation-delay: {{ index }}s;">
+                            {{ item }}
+                    </span>
+                {% endwith %}
+            {% endfor %}
 
-    <form action="{% url 'pull_lever' %}" method="post">
+        {% endif %}
+    </div>
+    
+    <form action="{% url 'pull_lever' %}" method="post" class="mt-1">
         {% csrf_token %}
-        <button type="submit" class="btn btn-secondary">Pull Lever (Costs 1 Credit)</button>
+        <button type="submit" class="btn btn-secondary delayed-btn" onclick="disableButton()">Pull Lever (Costs 1 Credit)</button>
     </form>
 
     <form action="{% url 'cash_out' %}" method="post">
@@ -41,6 +76,32 @@
 {% endblock content %}
 
 {% block domready %}
+
+    function disableButton() {
+        var button = document.getElementById('myButton');
+
+        // Disable the button
+        button.disabled = true;
+
+        // Set a timeout to re-enable the button after 3 seconds
+        setTimeout(function() {
+            button.disabled = false;
+        }, 3000); // 3000 milliseconds = 3 seconds
+    }
+
+    // Wait for the page to load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Set a timeout to show the content after 3 seconds
+        setTimeout(function() {
+            // Get the delayed content element
+            var delayedContent = document.getElementById('delayed-content');
+
+            // Display the delayed content
+            delayedContent.style.display = 'block';
+        }, 3000); // 3000 milliseconds = 3 seconds
+    });
+
+    // CASH OUT button functionality
     const button = document.getElementById('cash_out_btn');
 
     button.addEventListener('mouseenter', function () {

@@ -1,6 +1,10 @@
 import uuid
 import random
-from core.config.constants import SYMBOLS_LIST, THIRTY_PERCENT_CHANCE, SIXTY_PERCENT_CHANCE
+from core.config.constants import (
+    SYMBOLS_LIST,
+    THIRTY_PERCENT_CHANCE,
+    SIXTY_PERCENT_CHANCE,
+)
 
 
 def generate_random_string(string_length=10):
@@ -16,7 +20,7 @@ def generate_random_string(string_length=10):
 
 def generate_random_blocks(user_credits):
     result = generate_random_symbols_list()
-    re_roll_chances = generate_random_number(0, 100)/100
+    re_roll_chances = generate_random_number(0, 100) / 100
     if user_credits < 40:
         return result
     elif user_credits >= 40 and user_credits <= 60:
